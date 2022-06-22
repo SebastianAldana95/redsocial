@@ -19,6 +19,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
     ];
@@ -33,6 +35,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = ['avatar']; // cuando se obtenga al usuario, tambien devolvera la propiedad avatar
+
     /**
      * The attributes that should be cast.
      *
@@ -41,4 +45,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'name';
+    }
+
+    public function link()
+    {
+        return route('users.show', $this);
+    }
+
+    public function avatar()
+    {
+        return '/img/avatar.jpg';
+    }
+
+    public function getAvatarAttribute() // metodo para devolver lo que esta en avatar
+    {
+        return $this->avatar();
+    }
+
+    public function statuses()
+    {
+        return $this->hasMany(Status::class);
+    }
 }
