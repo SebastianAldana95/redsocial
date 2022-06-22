@@ -127,7 +127,6 @@ class UserCanRequestFriendshipTest extends DuskTestCase
     public function recipients_can_accept_friendship_requests()
     {
         $this->markTestIncomplete();
-
         $this->withoutExceptionHandling();
         $sender = User::factory()->create();
         $recipient = User::factory()->create();

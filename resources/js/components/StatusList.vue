@@ -1,10 +1,12 @@
 <template>
     <div @click="redirectIfGuest">
-        <status-list-item
-            v-for="status in statuses"
-            :status="status"
-            :key="status.id"
-        ></status-list-item>
+        <transition-group name="status-list-transition">
+            <status-list-item
+                v-for="status in statuses"
+                :key="status.id"
+                :status="status"
+            ></status-list-item>
+        </transition-group>
     </div>
 </template>
 
@@ -33,6 +35,11 @@
             EventBus.$on('status-created', status => {
                 this.statuses.unshift(status);
             });
+
+            Echo.channel('statuses').listen('StatusCreated', ({status}) => {
+                this.statuses.unshift(status); // agregue el estado al principio de la lista de statuses
+                console.log(status);
+            })
         },
         computed: {
             getUrl(){
@@ -42,6 +49,8 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    .status-list-transition-move{
+        transition: all .8s;
+    }
 </style>

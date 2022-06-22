@@ -2,7 +2,7 @@
     <div>
         <div v-if="localFriendshipStatus === 'pending'">
             <span v-text="sender.name"></span> te ha enviado una solicitud de amistad
-            <button @click="acceptFriendshipRequest">Aceptar solicitud</button>
+            <button dusk="accept-friendship" @click="acceptFriendshipRequest">Aceptar solicitud</button>
             <button dusk="deny-friendship" @click="denyFriendshipRequest">Denegar solicitud</button>
         </div>
         <div v-else-if="localFriendshipStatus === 'accepted'">

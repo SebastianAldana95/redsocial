@@ -27,7 +27,7 @@ class FriendshipsController extends Controller
 
     public function destroy(User $user)
     {
-        $friendship = Friendship::query()->betweenUsers(auth()->user(), $user)->first(); //scope entre usuarios
+        $friendship = Friendship::query()->betweenUsers(auth()->user(), $user)->first(); //scope solicitudes entre usuarios(usuario_autenticado, usuario por parametro)
 
         if ($friendship->status === 'denied' && (int) $friendship->sender_id === auth()->id())
         {

@@ -25,7 +25,7 @@ class Friendship extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeBetweenUsers($query, $sender, $recipient) // camel case
+    public function scopeBetweenUsers($query, $sender, $recipient) // camel case query necesario para el scope
     {
         $query->where([
             ['sender_id', $sender->id],
