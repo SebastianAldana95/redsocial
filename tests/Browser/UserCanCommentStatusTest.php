@@ -34,8 +34,6 @@ class UserCanCommentStatusTest extends DuskTestCase
     /** @test */
     public function authenticated_users_can_comment_statuses()
     {
-        $this->withoutExceptionHandling();
-
         $status = Status::factory()->create();
         $user = User::factory()->create();
 
@@ -50,5 +48,31 @@ class UserCanCommentStatusTest extends DuskTestCase
                     ->assertSee($comment) // verifica
             ;
         });
+    }
+
+    /** @test */
+    public function users_can_see_comment_in_real_time()
+    {
+        $status = Status::factory()->create();
+        $user = User::factory()->create();
+
+        $this->browse(function (Browser $browser1, Browser $browser2) use ($status, $user) {
+            $comment = 'Mi primer comentario';
+
+            $browser1->visit('/');
+
+            $browser2->loginAs($user)
+                ->visit('/')
+                ->waitForText($status->body) // esperar campo body
+                ->type('comment', $comment) //type (escribir) -> dentro de un campo comment
+                ->press('@comment-btn') // enviar el comentario presionando del botón
+            ;
+
+            $browser1
+                ->waitForText($comment)
+                ->assertSee($comment)
+            ;
+        });
+
     }
 }

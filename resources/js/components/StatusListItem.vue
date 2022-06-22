@@ -52,7 +52,7 @@
             </div>
 
             <form @submit.prevent="addComment" v-if="isAuthenticated"> <!-- prevent -> previene que se recargue la página-->
-                <div class="d-flex align-items-center" v-if="currentUser">
+                <div class="d-flex align-items-center">
                     <img class="rounded shadow-sm me-2" width="45px"
                          :src="currentUser.avatar"
                          :alt="currentUser.name">
@@ -88,6 +88,11 @@
                 newComment: '',
                 comments: this.status.comments,
             }
+        },
+        mounted() {
+            Echo.channel(`statuses.${this.status.id}.comments`).listen('CommentCreated', ({comment}) => {
+                this.comments.push(comment);
+            });
         },
         methods: {
             addComment(){

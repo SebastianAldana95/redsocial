@@ -22000,8 +22000,6 @@ __webpack_require__.r(__webpack_exports__);
 
       _this.statuses.unshift(status); // agregue el estado al principio de la lista de statuses
 
-
-      console.log(status);
     });
   },
   computed: {
@@ -22118,16 +22116,25 @@ __webpack_require__.r(__webpack_exports__);
       comments: this.status.comments
     };
   },
+  mounted: function mounted() {
+    var _this = this;
+
+    Echo.channel("statuses.".concat(this.status.id, ".comments")).listen('CommentCreated', function (_ref) {
+      var comment = _ref.comment;
+
+      _this.comments.push(comment);
+    });
+  },
   methods: {
     addComment: function addComment() {
-      var _this = this;
+      var _this2 = this;
 
       axios.post("/statuses/".concat(this.status.id, "/comments"), {
         body: this.newComment
       }).then(function (res) {
-        _this.newComment = '';
+        _this2.newComment = '';
 
-        _this.comments.push(res.data.data);
+        _this2.comments.push(res.data.data);
       })["catch"](function (err) {
         console.log(err.response.data);
       });
@@ -52489,56 +52496,54 @@ var render = function () {
                 },
               },
               [
-                _vm.currentUser
-                  ? _c("div", { staticClass: "d-flex align-items-center" }, [
-                      _c("img", {
-                        staticClass: "rounded shadow-sm me-2",
-                        attrs: {
-                          width: "45px",
-                          src: _vm.currentUser.avatar,
-                          alt: _vm.currentUser.name,
+                _c("div", { staticClass: "d-flex align-items-center" }, [
+                  _c("img", {
+                    staticClass: "rounded shadow-sm me-2",
+                    attrs: {
+                      width: "45px",
+                      src: _vm.currentUser.avatar,
+                      alt: _vm.currentUser.name,
+                    },
+                  }),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "input-group" }, [
+                    _c("textarea", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.newComment,
+                          expression: "newComment",
                         },
-                      }),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "input-group" }, [
-                        _c("textarea", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.newComment,
-                              expression: "newComment",
-                            },
-                          ],
-                          staticClass: "form-control border-0 shadow-sm",
-                          attrs: {
-                            name: "comment",
-                            placeholder: "Escribe un comentario...",
-                            rows: "1",
-                            required: "",
-                          },
-                          domProps: { value: _vm.newComment },
-                          on: {
-                            input: function ($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.newComment = $event.target.value
-                            },
-                          },
-                        }),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            attrs: { dusk: "comment-btn" },
-                          },
-                          [_vm._v("Enviar")]
-                        ),
-                      ]),
-                    ])
-                  : _vm._e(),
+                      ],
+                      staticClass: "form-control border-0 shadow-sm",
+                      attrs: {
+                        name: "comment",
+                        placeholder: "Escribe un comentario...",
+                        rows: "1",
+                        required: "",
+                      },
+                      domProps: { value: _vm.newComment },
+                      on: {
+                        input: function ($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.newComment = $event.target.value
+                        },
+                      },
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { dusk: "comment-btn" },
+                      },
+                      [_vm._v("Enviar")]
+                    ),
+                  ]),
+                ]),
               ]
             )
           : _vm._e(),

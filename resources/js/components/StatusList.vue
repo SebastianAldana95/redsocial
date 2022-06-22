@@ -38,8 +38,7 @@
 
             Echo.channel('statuses').listen('StatusCreated', ({status}) => {
                 this.statuses.unshift(status); // agregue el estado al principio de la lista de statuses
-                console.log(status);
-            })
+            });
         },
         computed: {
             getUrl(){
