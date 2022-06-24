@@ -10,4 +10,5 @@ class NotificationsController extends Controller
     {
         return auth()->user()->notifications;
     }
+
 }

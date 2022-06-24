@@ -11,10 +11,8 @@
 </template>
 
 <script>
-    import StatusListItem from "./StatusListItem";
 
     export default {
-        components: { StatusListItem },
         props: {
             url: String
         },

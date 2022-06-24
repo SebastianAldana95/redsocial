@@ -9,6 +9,7 @@ use Str;
 
 class DatabaseNotificationFactory extends Factory
 {
+
     /**
      * The name of the factory's corresponding model.
      *
