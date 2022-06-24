@@ -10,15 +10,11 @@ class CommentLikesController extends Controller
 {
     public function store(Comment $comment)
     {
-        $comment->likes()->create([
-            'user_id' => auth()->id()
-        ]);
+        $comment->like();
     }
 
     public function destroy(Comment $comment)
     {
-        $comment->likes()->where([
-            'user_id' => auth()->id(),
-        ])->delete();
+        $comment->unlike();
     }
 }

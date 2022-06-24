@@ -8,7 +8,6 @@ use App\Models\Status;
 use App\Models\User;
 use Broadcast;
 use Event;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,15 +54,12 @@ class CreateStatusTest extends TestCase
         $this->actingAs($user)->postJson(route('statuses.store'), ['body' => 'Mi primer status']);
 
         Event::assertDispatched(StatusCreated::class, function ($statusCreatedEvent) {
-            $this->assertInstanceOf(ShouldBroadcast::class, $statusCreatedEvent);
             $this->assertInstanceOf(StatusResource::class, $statusCreatedEvent->status);
-            $this->assertInstanceOf(Status::class, $statusCreatedEvent->status->resource);
-            $this->assertEquals(Status::query()->first()->id, $statusCreatedEvent->status->id);
-            $this->assertEquals(
-                'socket-id',
-                $statusCreatedEvent->socket,
-                'The event ' . get_class($statusCreatedEvent) . ' must call the method "dontBroadcastToCurrentUser" in the constructor.'
-            );
+            $this->assertTrue(Status::query()->first()->is($statusCreatedEvent->status->resource));
+            $this->assertEventChannelType('public', $statusCreatedEvent);
+            $this->assertEventChannelName('statuses', $statusCreatedEvent);
+            $this->assertDontBroadcastToCurrentUser($statusCreatedEvent);
+
             return true;
         });
 

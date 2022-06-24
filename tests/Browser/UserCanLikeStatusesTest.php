@@ -47,6 +47,7 @@ class UserCanLikeStatusesTest extends DuskTestCase
                 ->press('@like-btn')
                 ->waitForText('TE GUSTA')
                 ->assertSee('TE GUSTA')
+                ->pause(3000)
                 ->assertSeeIn('@likes-count', 1)
 
                 ->press('@like-btn')
@@ -54,6 +55,35 @@ class UserCanLikeStatusesTest extends DuskTestCase
                 ->assertSee('ME GUSTA')
                 ->assertSeeIn('@likes-count', 0)
             ;
+        });
+    }
+
+    /**
+     * @test
+     * @throws Throwable
+     */
+    public function users_can_see_likes_and_unlikes_in_real_time()
+    {
+        $user = User::factory()->create();
+        $status = Status::factory()->create();
+
+        $this->browse(function (Browser $browser1, Browser $browser2) use ($user, $status) {
+            $browser1->visit('/');
+            $browser2->loginAs($user)
+                ->visit('/')
+                ->waitForText($status->body) // ya se renderizaron los estados con VUE
+                ->assertSeeIn('@likes-count', 0)
+                ->press('@like-btn')
+                ->waitForText('TE GUSTA')
+            ;
+
+            $browser1->assertSeeIn('@likes-count', 1);
+
+            $browser2->press('@like-btn')
+                ->waitForText('ME GUSTA')
+            ;
+
+            $browser1->assertSeeIn('@likes-count', 0);
         });
     }
 }

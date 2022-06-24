@@ -23,6 +23,7 @@ Route::view('/', 'welcome')->name('home');
 
 // Statuses routes
 Route::get('statuses', [\App\Http\Controllers\StatusesController::class, 'index'])->name('statuses.index');
+Route::get('statuses/{status}', [\App\Http\Controllers\StatusesController::class, 'show'])->name('statuses.show');
 Route::post('statuses', [\App\Http\Controllers\StatusesController::class, 'store'])->name('statuses.store')->middleware('auth');
 
 // Statuses likes routes
@@ -50,5 +51,8 @@ Route::delete('friendships/{user}', [\App\Http\Controllers\FriendshipsController
 Route::get('friends/requests', [\App\Http\Controllers\AcceptFriendshipsController::class, 'index'])->name('accept-friendships.index')->middleware('auth');
 Route::post('accept-friendships/{sender}', [\App\Http\Controllers\AcceptFriendshipsController::class, 'store'])->name('accept-friendships.store')->middleware('auth');
 Route::delete('accept-friendships/{sender}', [\App\Http\Controllers\AcceptFriendshipsController::class, 'destroy'])->name('accept-friendships.destroy')->middleware('auth');
+
+// Notification routes
+Route::get('notifications', [\App\Http\Controllers\NotificationsController::class, 'index'])->name('notifications.index')->middleware('auth');
 
 

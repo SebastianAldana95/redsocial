@@ -24,50 +24,16 @@
             </div>
         </div>
 
-        <div class="card-footer">
+        <div class="card-footer pb-0" v-if="isAuthenticated || status.comments.length">
+            <comment-list
+                :comments="status.comments"
+                :status-id="status.id"
+            ></comment-list>
 
-            <div v-for="comment in comments" class="mb-2">
+            <CommentForm
+                :status-id="status.id"
+            ></CommentForm>
 
-                <div class="d-flex">
-                    <img class="rounded shadow-sm me-2" height="40px" width="35px" :src="comment.user.avatar" :alt="comment.user.name">
-                    <div class="flex-grow-1">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body p-2 text-secondary">
-                                <a class="text-decoration-none" :href="comment.user.link"><strong>{{ comment.user.name }}</strong></a>
-                                {{ comment.body }}
-                            </div>
-                        </div>
-                        <small class="float-end badge bg-primary rounded-pill py-1 px-2 mt-1" dusk="comment-likes-count">
-                            <font-awesome-icon icon="fa-solid fa-thumbs-up" />
-                            {{ comment.likes_count }}
-                        </small>
-                        <like-btn
-                            dusk="comment-like-btn"
-                            :url="`/comments/${comment.id}/likes`"
-                            :model="comment"
-                            class="comments-like-btn"
-                        ></like-btn>
-                    </div>
-                </div>
-            </div>
-
-            <form @submit.prevent="addComment" v-if="isAuthenticated"> <!-- prevent -> previene que se recargue la página-->
-                <div class="d-flex align-items-center">
-                    <img class="rounded shadow-sm me-2" width="45px"
-                         :src="currentUser.avatar"
-                         :alt="currentUser.name">
-                    <div class="input-group">
-                        <textarea v-model="newComment"
-                                  class="form-control border-0 shadow-sm"
-                                  name="comment"
-                                  placeholder="Escribe un comentario..."
-                                  rows="1"
-                                  required
-                        ></textarea>
-                        <button class="btn btn-primary" dusk="comment-btn">Enviar</button>
-                    </div>
-                </div>
-            </form>
         </div>
 
     </div>
@@ -75,37 +41,29 @@
 
 <script>
     import LikeBtn from "./LikeBtn";
+    import CommentList from "./CommentList";
+    import CommentForm from "./CommentForm";
+
     export default {
-        components: { LikeBtn },
-        props: { // validar las propiedades del objeto
+        components: { LikeBtn, CommentList, CommentForm },
+        props: {
             status: {
                 type: Object,
                 required: true
             },
         },
-        data(){
-            return {
-                newComment: '',
-                comments: this.status.comments,
-            }
-        },
         mounted() {
-            Echo.channel(`statuses.${this.status.id}.comments`).listen('CommentCreated', ({comment}) => {
-                this.comments.push(comment);
-            });
-        },
-        methods: {
-            addComment(){
-                axios.post(`/statuses/${this.status.id}/comments`, {body: this.newComment})
-                    .then(res => {
-                        this.newComment = '';
-                        this.comments.push(res.data.data);
-                    })
-                    .catch(err => {
-                        console.log(err.response.data)
-                    })
-            }
+            Echo.channel(`statuses.${this.status.id}.likes`)
+                .listen('ModelLiked', e => {
+                    this.status.likes_count++;
+                })
+
+            Echo.channel(`statuses.${this.status.id}.likes`)
+                .listen('ModelUnliked', e => {
+                    this.status.likes_count--;
+                })
         }
+
     }
 </script>
 

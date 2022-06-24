@@ -1,0 +1,50 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use Database\Factories\DatabaseNotificationFactory;
+use Faker\Factory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Str;
+use Tests\TestCase;
+
+class CanGetNotificationsTest extends TestCase
+{
+    /** @test */
+    public function guests_users_cannot_access_notifications()
+    {
+        $this->getJson(route('notifications.index'))->assertStatus(401);
+    }
+
+
+    /** @test */
+    public function authenticated_users_can_get_their_notifications() //usuarios autenticados pueden ver sus notificaciones
+    {
+        $this->withExceptionHandling();
+        $user = User::factory()->create();
+        $notification = DatabaseNotification::query()->create([
+            'id' => Str::uuid()->toString(),
+            'type' => 'App\\Notifications\\ExampleNotification',
+            'notifiable_type' => 'App\Models\User',
+            'notifiable_id' => $user->id,
+            'data' => [
+                'link' => url('/'),
+                'message' => 'Mensaje de la notificación'
+            ],
+            'read_at' => null
+        ]);
+
+        $this->actingAs($user)->getJson(route('notifications.index'))
+            ->assertJson([
+                [
+                    'data' => [
+                        'link' => $notification->data['link'],
+                        'message' => $notification->data['message']
+                    ]]
+            ])
+        ;
+    }
+}

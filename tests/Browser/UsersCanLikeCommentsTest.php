@@ -31,13 +31,46 @@ class UsersCanLikeCommentsTest extends DuskTestCase
                 ->press('@comment-like-btn')
                 ->waitForText('TE GUSTA')
                 ->assertSee('TE GUSTA')
+                ->pause(3000)
                 ->assertSeeIn('@comment-likes-count', 1)
 
                 ->press('@comment-like-btn')
                 ->waitForText('ME GUSTA')
                 ->assertSee('ME GUSTA')
-                //->assertSeeIn('@comment-likes-count', 0)
+                ->pause(3000)
+                ->assertSeeIn('@comment-likes-count', 0)
             ;
+        });
+    }
+
+    /**
+     * @test
+     * @throws Throwable
+     */
+    public function users_can_see_likes_in_real_time()
+    {
+
+        $user = User::factory()->create();
+        $comment = Comment::factory()->create();
+
+        $this->browse(function (Browser $browser1, Browser $browser2) use ($user, $comment) {
+            $browser1->visit('/');
+
+            $browser2->loginAs($user)
+                ->visit('/')
+                ->waitForText($comment->body) // ya se renderizaron los estados con VUE // ver el cuerpo del comentario
+                ->assertSeeIn('@comment-likes-count', 0)
+                ->press('@comment-like-btn')
+                ->waitForText('TE GUSTA')
+            ;
+
+            $browser1->assertSeeIn('@comment-likes-count', 1);
+
+            $browser2->press('@comment-like-btn')
+                ->waitForText('ME GUSTA')
+            ;
+
+            $browser1->pause(3000)->assertSeeIn('@comment-likes-count', 0);
         });
     }
 }

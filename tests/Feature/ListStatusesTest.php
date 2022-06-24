@@ -69,4 +69,13 @@ class ListStatusesTest extends TestCase
             $response->json('data.0.body')
         );
     }
+
+    /** @test  */
+    public function can_see_individual_status()
+    {
+        $status = Status::factory()->create();
+
+        $this->get($status->path())
+            ->assertSee($status->body);
+    }
 }
