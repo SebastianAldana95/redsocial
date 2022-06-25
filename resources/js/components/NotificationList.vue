@@ -9,7 +9,7 @@
            data-bs-toggle="dropdown"
            aria-haspopup="true"
            aria-expanded="false"
-            ><slot></slot> {{ count }}
+            ><slot></slot> <span dusk="notifications-count">{{ count }}</span>
         </a>
 
         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownNotifications">
@@ -36,6 +36,26 @@ export default {
         }
     },
     created() {  // se ejecuta antes de mounted
+
+        // Pusher
+        // Canal: privado-App.Models.User.11,
+        // Evento: Illuminate\Notifications\Events\BroadcastNotificationCreated
+
+        if (this.isAuthenticated)
+        {
+            Echo.private(`App.Models.User.${this.currentUser.id}`)
+                .notification(notification => {
+                    this.count++;
+                    this.notifications.push({
+                        id: notification.id,
+                        data: {
+                            link: notification.link,
+                            message: notification.message,
+                        }
+                    })
+                })
+        }
+
         axios.get('/notifications')
             .then(res => {
                 this.notifications = res.data;

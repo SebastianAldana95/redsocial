@@ -47,4 +47,6 @@ trait HasLikes
     {
         return strtolower(Str::plural(class_basename($this))) . "." . $this->getKey() . ".likes";
     }
+
+    abstract public function path(); //cualquier clase que utilice el trait HasLikes debe implementar el metodo path()
 }

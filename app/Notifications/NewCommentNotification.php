@@ -8,24 +8,20 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewLikeNotification extends Notification
+class NewCommentNotification extends Notification
 {
     use Queueable;
 
-    public $model;
-    public $likeSender;
+    public $comment;
 
     /**
      * Create a new notification instance.
      *
-     * @param $model
-     * @param $likeSender
+     * @param $comment
      */
-    public function __construct($model, $likeSender)
+    public function __construct($comment)
     {
-
-        $this->model = $model;
-        $this->likeSender = $likeSender;
+        $this->comment = $comment;
     }
 
     /**
@@ -62,8 +58,8 @@ class NewLikeNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'link' => $this->model->path(),
-            'message' => "Al usuario {$this->likeSender->name} le gustó tu publicación"
+            'link' => $this->comment->path(),
+            'message' => "{$this->comment->user->name} comentó tu publicación"
         ];
     }
 
