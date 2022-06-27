@@ -21696,6 +21696,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     sender: {
@@ -21957,31 +21965,35 @@ __webpack_require__.r(__webpack_exports__);
     recipient: {
       type: Object,
       required: true
-    },
-    friendshipStatus: {
-      type: String,
-      required: true
     }
   },
   data: function data() {
     return {
-      localFriendshipStatus: this.friendshipStatus
+      friendshipStatus: ''
     };
+  },
+  created: function created() {
+    var _this = this;
+
+    // se dispara cuando el componente ha sido creado
+    axios.get("friendships/".concat(this.recipient.name)).then(function (res) {
+      _this.friendshipStatus = res.data.friendship_status;
+    });
   },
   methods: {
     toggleFriendshipStatus: function toggleFriendshipStatus() {
-      var _this = this;
+      var _this2 = this;
 
       this.redirectIfGuest();
       var method = this.getMethod();
       axios[method]("friendships/".concat(this.recipient.name)).then(function (res) {
-        _this.localFriendshipStatus = res.data.friendship_status;
+        _this2.friendshipStatus = res.data.friendship_status;
       })["catch"](function (err) {
         console.log(err.response.data);
       });
     },
     getMethod: function getMethod() {
-      if (this.localFriendshipStatus === 'pending' || this.localFriendshipStatus === 'accepted') {
+      if (this.friendshipStatus === 'pending' || this.friendshipStatus === 'accepted') {
         return 'delete';
       }
 
@@ -21990,15 +22002,15 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     getText: function getText() {
-      if (this.localFriendshipStatus === 'pending') {
+      if (this.friendshipStatus === 'pending') {
         return 'Cancelar solicitud';
       }
 
-      if (this.localFriendshipStatus === 'accepted') {
+      if (this.friendshipStatus === 'accepted') {
         return 'Eliminar de mis amigos';
       }
 
-      if (this.localFriendshipStatus === 'denied') {
+      if (this.friendshipStatus === 'denied') {
         return 'Solicitud denegada';
       }
 
@@ -22048,12 +22060,7 @@ __webpack_require__.r(__webpack_exports__);
       var method = this.model.is_liked ? 'delete' : 'post';
       axios[method](this.url).then(function (res) {
         _this.model.is_liked = !_this.model.is_liked;
-
-        if (method === 'post') {
-          _this.model.likes_count++;
-        } else {
-          _this.model.likes_count--;
-        }
+        _this.model.likes_count = res.data.likes_count;
       });
     }
   },
@@ -52871,53 +52878,91 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _vm.localFriendshipStatus === "pending"
-      ? _c("div", [
-          _c("span", { domProps: { textContent: _vm._s(_vm.sender.name) } }),
-          _vm._v(" te ha enviado una solicitud de amistad\n        "),
-          _c(
-            "button",
-            {
-              attrs: { dusk: "accept-friendship" },
-              on: { click: _vm.acceptFriendshipRequest },
-            },
-            [_vm._v("Aceptar solicitud")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              attrs: { dusk: "deny-friendship" },
-              on: { click: _vm.denyFriendshipRequest },
-            },
-            [_vm._v("Denegar solicitud")]
-          ),
-        ])
-      : _vm.localFriendshipStatus === "accepted"
-      ? _c("div", [
-          _vm._v("\n        Tú y "),
-          _c("span", { domProps: { textContent: _vm._s(_vm.sender.name) } }),
-          _vm._v(" son amigos\n    "),
-        ])
-      : _vm.localFriendshipStatus === "denied"
-      ? _c("div", [
-          _vm._v("\n        Solicitud denegada de "),
-          _c("span", { domProps: { textContent: _vm._s(_vm.sender.name) } }),
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.localFriendshipStatus === "deleted"
-      ? _c("div", [_vm._v("Solicitud eliminada")])
-      : _c(
-          "button",
-          {
-            attrs: { dusk: "delete-friendship" },
-            on: { click: _vm.deleteFriendship },
-          },
-          [_vm._v("Eliminar")]
-        ),
-  ])
+  return _c(
+    "div",
+    {
+      staticClass:
+        "d-flex justify-content-between bg-light p-3 rounded mb-3 shadow-sm",
+    },
+    [
+      _c("div", [
+        _vm.localFriendshipStatus === "pending"
+          ? _c("div", [
+              _c("span", {
+                domProps: { textContent: _vm._s(_vm.sender.name) },
+              }),
+              _vm._v(" te ha enviado una solicitud de amistad\n       "),
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.localFriendshipStatus === "accepted"
+          ? _c("div", [
+              _vm._v("\n           Tú y "),
+              _c("span", {
+                domProps: { textContent: _vm._s(_vm.sender.name) },
+              }),
+              _vm._v(" son amigos\n       "),
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.localFriendshipStatus === "denied"
+          ? _c("div", [
+              _vm._v("\n           Solicitud denegada de "),
+              _c("span", {
+                domProps: { textContent: _vm._s(_vm.sender.name) },
+              }),
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.localFriendshipStatus === "deleted"
+          ? _c("div", [
+              _vm._v("\n           Solicitud eliminada de "),
+              _c("span", {
+                domProps: { textContent: _vm._s(_vm.sender.name) },
+              }),
+            ])
+          : _vm._e(),
+      ]),
+      _vm._v(" "),
+      _c("div", [
+        _vm.localFriendshipStatus === "pending"
+          ? _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-primary",
+                attrs: { dusk: "accept-friendship" },
+                on: { click: _vm.acceptFriendshipRequest },
+              },
+              [_vm._v("Aceptar solicitud")]
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.localFriendshipStatus === "pending"
+          ? _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-warning",
+                attrs: { dusk: "deny-friendship" },
+                on: { click: _vm.denyFriendshipRequest },
+              },
+              [_vm._v("Denegar solicitud")]
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.localFriendshipStatus !== "deleted"
+          ? _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-danger",
+                attrs: { dusk: "delete-friendship" },
+                on: { click: _vm.deleteFriendship },
+              },
+              [_vm._v("Eliminar")]
+            )
+          : _vm._e(),
+      ]),
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -52959,7 +53004,8 @@ var render = function () {
             _c("img", {
               staticClass: "rounded shadow-sm me-2",
               attrs: {
-                width: "45px",
+                width: "40px",
+                height: "40px",
                 src: _vm.currentUser.avatar,
                 alt: _vm.currentUser.name,
               },
@@ -53081,7 +53127,7 @@ var render = function () {
         staticClass: "rounded shadow-sm me-2",
         attrs: {
           height: "40px",
-          width: "35px",
+          width: "40px",
           src: _vm.comment.user.avatar,
           alt: _vm.comment.user.name,
         },
@@ -53545,16 +53591,16 @@ var render = function () {
     _c("div", { staticClass: "card-body d-flex flex-column" }, [
       _c("div", { staticClass: "d-flex align-items-center mb-3" }, [
         _c("img", {
-          staticClass: "rounded mr-3 shadow-sm m-sm-2",
+          staticClass: "figure-img img-fluid rounded-circle",
           attrs: {
-            height: "40px",
-            width: "40px",
+            height: "100",
+            width: "100",
             src: _vm.status.user.avatar,
             alt: _vm.status.user.name,
           },
         }),
         _vm._v(" "),
-        _c("div", {}, [
+        _c("div", [
           _c("h5", { staticClass: "mb-1" }, [
             _c("a", {
               staticClass: "text-decoration-none",

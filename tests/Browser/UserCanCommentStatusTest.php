@@ -55,11 +55,14 @@ class UserCanCommentStatusTest extends DuskTestCase
     {
         $status = Status::factory()->create();
         $user = User::factory()->create();
+        $user2 = User::factory()->create();
 
-        $this->browse(function (Browser $browser1, Browser $browser2) use ($status, $user) {
+        $this->browse(function (Browser $browser1, Browser $browser2) use ($status, $user, $user2) {
             $comment = 'Mi primer comentario';
 
-            $browser1->visit('/');
+            $browser1->loginAs($user2)
+                    ->visit('/')
+                    ->resize(1024, 768);
 
             $browser2->loginAs($user)
                 ->visit('/')

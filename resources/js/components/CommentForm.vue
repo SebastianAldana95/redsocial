@@ -1,7 +1,7 @@
 <template>
     <form @submit.prevent="addComment" v-if="isAuthenticated" class="mb-3"> <!-- prevent -> previene que se recargue la página-->
         <div class="d-flex align-items-center">
-            <img class="rounded shadow-sm me-2" width="45px"
+            <img class="rounded shadow-sm me-2" width="40px" height="40px"
                  :src="currentUser.avatar"
                  :alt="currentUser.name">
             <div class="input-group">

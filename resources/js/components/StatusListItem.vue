@@ -2,8 +2,8 @@
     <div class="card border-0 mb-3 shadow-sm">
         <div class="card-body d-flex flex-column">
             <div class="d-flex align-items-center mb-3">
-                <img class="rounded mr-3 shadow-sm m-sm-2" height="40px" width="40px" :src="status.user.avatar" :alt="status.user.name">
-                <div  class="">
+                <img class="figure-img img-fluid rounded-circle" height="100" width="100" :src="status.user.avatar" :alt="status.user.name">
+                <div>
                     <h5 class="mb-1"><a class="text-decoration-none" :href="status.user.link" v-text="status.user.name"></a></h5>
                     <div class="small text-muted" v-text="status.ago"></div>
                 </div>

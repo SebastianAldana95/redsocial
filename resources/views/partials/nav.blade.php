@@ -32,6 +32,14 @@
                         </li>
                     @endif
                 @else
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('friends.index') }}">{{ __('Amigos') }}</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('accept-friendships.index') }}">{{ __('Solicitudes') }}</a>
+                    </li>
+
                     <notification-list>
                         <font-awesome-icon icon="fa-solid fa-bell" />
                     </notification-list>

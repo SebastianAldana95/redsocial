@@ -1,6 +1,6 @@
 <template>
     <div :class="highlight" :id="`comment-${this.comment.id}`" class="d-flex">
-        <img class="rounded shadow-sm me-2" height="40px" width="35px" :src="comment.user.avatar" :alt="comment.user.name">
+        <img class="rounded shadow-sm me-2" height="40px" width="40px" :src="comment.user.avatar" :alt="comment.user.name">
         <div class="flex-grow-1">
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-2 text-secondary">

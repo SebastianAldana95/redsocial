@@ -43,6 +43,7 @@ class UserCanRequestFriendshipTest extends DuskTestCase
                 ->waitForText('Cancelar solicitud')
                 ->assertSee('Cancelar solicitud')
                 ->visit(route('users.show', $recipient))
+                ->waitForText('Cancelar solicitud')
                 ->assertSee('Cancelar solicitud')
                 ->press('@request-friendship')
                 ->waitForText('Solicitar amistad')
@@ -84,11 +85,13 @@ class UserCanRequestFriendshipTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($sender, $recipient) {
             $browser->loginAs($sender)
                 ->visit(route('users.show', $recipient))
+                ->waitForText('Eliminar de mis amigos')
                 ->assertSee('Eliminar de mis amigos')
                 ->press('@request-friendship')
                 ->waitForText('Solicitar amistad')
                 ->assertSee('Solicitar amistad')
                 ->visit(route('users.show', $recipient))
+                ->waitForText('Solicitar amistad')
                 ->assertSee('Solicitar amistad')
             ;
         });
@@ -111,11 +114,13 @@ class UserCanRequestFriendshipTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($sender, $recipient) {
             $browser->loginAs($sender)
                 ->visit(route('users.show', $recipient))
+                ->waitForText('Solicitud denegada')
                 ->assertSee('Solicitud denegada')
                 ->press('@request-friendship')
                 ->waitForText('Solicitud denegada')
                 ->assertSee('Solicitud denegada')
                 ->visit(route('users.show', $recipient))
+                ->waitForText('Solicitud denegada')
                 ->assertSee('Solicitud denegada')
             ;
         });
@@ -126,7 +131,7 @@ class UserCanRequestFriendshipTest extends DuskTestCase
      */
     public function recipients_can_accept_friendship_requests()
     {
-        $this->markTestIncomplete();
+        // $this->markTestIncomplete();
         $sender = User::factory()->create();
         $recipient = User::factory()->create();
 
@@ -140,6 +145,7 @@ class UserCanRequestFriendshipTest extends DuskTestCase
                 ->visit(route('accept-friendships.index'))
                 ->assertSee($sender->name)
                 ->press('@accept-friendship')
+                ->pause(2000)
                 ->waitForText('son amigos', 7)
                 ->assertSee('son amigos')
                 ->visit(route('accept-friendships.index'))

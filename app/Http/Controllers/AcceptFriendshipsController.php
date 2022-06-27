@@ -4,36 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\Friendship;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class AcceptFriendshipsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $friendshipRequests = Friendship::query()->with('sender')->where([
-            'recipient_id' => auth()->id(),
-        ])->get();
-
-        return view('friendships.index', compact('friendshipRequests'));
+        return view('friendships.index', [
+            'friendshipRequests' => $request->user()->friendshipRequestsReceived
+        ]);
     }
 
-    public function store(User $sender)
+    public function store(Request $request, User $sender)
     {
-        Friendship::query()->where([
-            'sender_id' => $sender->id,
-            'recipient_id' => auth()->id(),
-        ])->update(['status' => 'accepted']);
+        $request->user()->acceptFriendRequestFrom($sender);
 
         return response()->json([
             'friendship_status' => 'accepted'
         ]);
     }
 
-    public function destroy(User $sender)
+    public function destroy(Request $request, User $sender)
     {
-        Friendship::query()->where([
-            'sender_id' => $sender->id,
-            'recipient_id' => auth()->id(),
-        ])->update(['status' => 'denied']);
+        $request->user()->denyFriendRequestFrom($sender);
 
         return response()->json([
             'friendship_status' => 'denied'

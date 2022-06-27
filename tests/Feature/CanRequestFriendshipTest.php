@@ -246,4 +246,21 @@ class CanRequestFriendshipTest extends TestCase
         $response->assertStatus(401);
     }
 
+    /** @test */
+    public function can_get_all_friendship_requests_received()
+    {
+        $sender = User::factory()->create();
+        $recipient = User::factory()->create();
+
+        $sender->sendFriendRequestTo($recipient);
+        Friendship::factory()->count(2)->create();
+
+        $this->actingAs($recipient);
+
+        $response = $this->get(route('accept-friendships.index'));
+
+        $this->assertCount(1, $response->viewData('friendshipRequests'));
+
+    }
+
 }

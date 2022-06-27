@@ -74,6 +74,7 @@ class UserCanLikeStatusesTest extends DuskTestCase
                 ->waitForText($status->body) // ya se renderizaron los estados con VUE
                 ->assertSeeIn('@likes-count', 0)
                 ->press('@like-btn')
+                ->pause(2000)
                 ->waitForText('TE GUSTA')
             ;
 

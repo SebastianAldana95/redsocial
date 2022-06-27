@@ -43,7 +43,11 @@ Route::get('@{user}', [\App\Http\Controllers\UsersController::class, 'show'])->n
 // Users statuses routes
 Route::get('users/{user}/statuses', [\App\Http\Controllers\UsersStatusController::class, 'index'])->name('users.statuses.index');
 
+// Friends routes
+Route::get('friends', [\App\Http\Controllers\FriendsController::class, 'index'])->name('friends.index')->middleware('auth');
+
 // Friendships routes
+Route::get('friendships/{recipient}', [\App\Http\Controllers\FriendshipsController::class, 'show'])->name('friendships.show')->middleware('auth');
 Route::post('friendships/{recipient}', [\App\Http\Controllers\FriendshipsController::class, 'store'])->name('friendships.store')->middleware('auth');
 Route::delete('friendships/{user}', [\App\Http\Controllers\FriendshipsController::class, 'destroy'])->name('friendships.destroy')->middleware('auth');
 

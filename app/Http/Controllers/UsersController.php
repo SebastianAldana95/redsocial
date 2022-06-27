@@ -10,11 +10,6 @@ class UsersController extends Controller
 {
     public function show(User $user)
     {
-        $friendshipStatus = optional(Friendship::query()->where([
-            'recipient_id' => $user->id,
-            'sender_id' => auth()->id()
-        ])->first())->status; // si no encuentra una solicitud, devulve null
-
-        return view('users.show', compact('user', 'friendshipStatus'));
+        return view('users.show', compact('user'));
     }
 }
